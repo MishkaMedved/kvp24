@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("api/payments")
+@RequestMapping("payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
