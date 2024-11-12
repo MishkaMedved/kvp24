@@ -15,7 +15,7 @@ import lombok.Setter;
 public class ServiceProvider {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "service_provider_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // ID поставщика услуг
 

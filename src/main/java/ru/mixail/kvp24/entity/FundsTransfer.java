@@ -18,6 +18,7 @@ import java.time.LocalDate;
 public class FundsTransfer {
 
     @Id
+    @Column(name = "funds_transfer_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // ID перевода
 

@@ -6,4 +6,5 @@ import ru.mixail.kvp24.entity.ServiceProvider;
 
 @Repository
 public interface ServiceProviderRepository extends JpaRepository<ServiceProvider, Long> {
+    
 }

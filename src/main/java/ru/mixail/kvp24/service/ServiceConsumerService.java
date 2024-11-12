@@ -8,7 +8,7 @@ import ru.mixail.kvp24.repository.ServiceConsumerRepository;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ServiceConsumerImpl {
+public class ServiceConsumerService {
     private final ServiceConsumerRepository serviceConsumerRepository;
 
 }

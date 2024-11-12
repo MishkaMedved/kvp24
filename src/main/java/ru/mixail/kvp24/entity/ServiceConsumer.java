@@ -15,6 +15,7 @@ import lombok.Setter;
 public class ServiceConsumer {
 
     @Id
+    @Column(name = "service_consumer_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // ID потребителя услуг
 
