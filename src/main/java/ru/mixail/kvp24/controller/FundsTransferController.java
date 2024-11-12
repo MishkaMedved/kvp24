@@ -14,7 +14,7 @@ import ru.mixail.kvp24.service.ServiceProviderService;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/funds-transfers")
+@RequestMapping("api/funds-transfers")
 @RequiredArgsConstructor
 public class FundsTransferController {
 
