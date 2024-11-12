@@ -18,7 +18,7 @@ public class ServiceConsumerService {
     }
 
     public ServiceConsumer getServiceConsumerByName(String name) {
-        return serviceConsumerRepository.findByName(name);
+        return serviceConsumerRepository.findByFullName(name);
     }
 
     @Transactional
