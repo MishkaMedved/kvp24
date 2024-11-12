@@ -6,12 +6,18 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.mixail.kvp24.entity.ServiceConsumer;
 import ru.mixail.kvp24.repository.ServiceConsumerRepository;
 
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ServiceConsumerService {
 
     private final ServiceConsumerRepository serviceConsumerRepository;
+
+    public List<ServiceConsumer> getAllServiceConsumers() {
+        return serviceConsumerRepository.findAll();
+    }
 
     public ServiceConsumer getServiceConsumerById(long id) {
         return serviceConsumerRepository.findById(id).orElse(null);
