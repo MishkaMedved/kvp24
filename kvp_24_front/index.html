@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Management</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Service Management</h1>
+
+    <!-- Service Providers Section -->
+    <section id="serviceProviders">
+        <h2>Service Providers</h2>
+        <ul id="providersList"></ul>
+        <button onclick="showAddProviderForm()">Add Provider</button>
+        <div id="addProviderForm" style="display: none;">
+            <input type="text" id="providerName" placeholder="Name">
+            <input type="text" id="bankName" placeholder="Bank Name">
+            <input type="text" id="bankBik" placeholder="Bank BIK">
+            <input type="text" id="accountNumber" placeholder="Account Number">
+            <button onclick="createServiceProvider()">Save Provider</button>
+        </div>
+    </section>
+
+    <!-- Service Consumers Section -->
+    <section id="serviceConsumers">
+        <h2>Service Consumers</h2>
+        <ul id="consumersList"></ul>
+        <button onclick="showAddConsumerForm()">Add Consumer</button>
+        <div id="addConsumerForm" style="display: none;">
+            <input type="text" id="consumerName" placeholder="Full Name">
+            <input type="text" id="consumerAccountNumber" placeholder="Account Number">
+            <button onclick="createServiceConsumer()">Save Consumer</button>
+        </div>
+    </section>
+
+    <!-- Payments Section -->
+    <section id="payments">
+        <h2>Payments</h2>
+        <ul id="paymentsList"></ul>
+        <button onclick="showPaymentForm()">Add Payment</button>
+        <div id="addPaymentForm" style="display: none;">
+            <input type="text" id="consumerId" placeholder="Consumer ID">
+            <input type="number" id="paymentAmount" placeholder="Amount">
+            <input type="date" id="paymentDate">
+            <button onclick="createPayment()">Save Payment</button>
+        </div>
+    </section>
+
+    <!-- Funds Transfer Section -->
+    <section id="fundsTransfer">
+        <h2>Funds Transfer</h2>
+        <ul id="transfersList"></ul>
+        <select id="transferProviderSelect"></select>
+        <input type="number" id="transferAmount" placeholder="Transfer Amount">
+        <button onclick="createFundsTransfer()">Create Transfer</button>
+    </section>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
