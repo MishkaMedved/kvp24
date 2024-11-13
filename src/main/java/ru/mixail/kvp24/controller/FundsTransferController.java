@@ -19,11 +19,11 @@ public class FundsTransferController {
     private final FundsTransferService fundsTransferService;
     private final ServiceProviderService serviceProviderService;
 
-    @GetMapping
-    public ResponseEntity<List<ServiceProvider>> getFundsTransfers() {
-        List<ServiceProvider> providers = serviceProviderService.getAllServiceProviders();
-        return ResponseEntity.ok(providers);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<ServiceProvider>> getFundsTransfers() {
+//        List<ServiceProvider> providers = serviceProviderService.getAllServiceProviders();
+//        return ResponseEntity.ok(providers);
+//    }
 
     @PostMapping("/create")
     public ResponseEntity<FundsTransfer> createTransfer(@RequestParam Long serviceProviderId,

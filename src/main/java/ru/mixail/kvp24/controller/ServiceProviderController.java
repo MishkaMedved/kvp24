@@ -1,7 +1,6 @@
 package ru.mixail.kvp24.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.mixail.kvp24.entity.ServiceProvider;
@@ -34,7 +33,7 @@ public class ServiceProviderController {
     @PostMapping
     public ResponseEntity<ServiceProvider> createServiceProvider(@RequestBody ServiceProvider provider) {
         serviceProviderService.saveServiceProvider(provider);
-        return ResponseEntity.status(HttpStatus.CREATED).body(provider);
+        return ResponseEntity.ok(provider);
     }
 
     // Обновление информации о поставщике услуг
@@ -42,7 +41,12 @@ public class ServiceProviderController {
     public ResponseEntity<ServiceProvider> updateServiceProvider(@PathVariable Long id,
                                                                  @RequestBody ServiceProvider updatedServiceProvider) {
         serviceProviderService.updateServiceProvider(id, updatedServiceProvider);
-        return ResponseEntity.status(HttpStatus.OK).body(updatedServiceProvider);
+        return ResponseEntity.ok(updatedServiceProvider);
     }
 
+    @DeleteMapping("{id}")
+    public ResponseEntity<ServiceProvider> deleteServiceProvider(@PathVariable Long id) {
+        serviceProviderService.deleteServiceProvider(id);
+        return ResponseEntity.noContent().build();
+    }
 }

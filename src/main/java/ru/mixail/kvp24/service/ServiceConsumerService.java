@@ -33,9 +33,9 @@ public class ServiceConsumerService {
     }
 
     @Transactional
-    public void updateServiceConsumer(long id) {
-        ServiceConsumer saved = getServiceConsumerById(id);
-        serviceConsumerRepository.save(saved);
+    public void updateServiceConsumer(long id, ServiceConsumer updatedServiceConsumer) {
+        updatedServiceConsumer.setId(id);
+        serviceConsumerRepository.save(updatedServiceConsumer);
     }
 
     @Transactional
