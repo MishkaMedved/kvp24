@@ -1,8 +1,10 @@
 package ru.mixail.kvp24.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("payments")
+@RequestMapping(value = "payments")
 @RequiredArgsConstructor
 public class PaymentController {
 
