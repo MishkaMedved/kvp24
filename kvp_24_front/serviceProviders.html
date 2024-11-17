@@ -1,22 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Поставщики услуг</title>
-    <script type="module" src="serviceProviders.js" defer></script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Поставщики услуг</h1>
-    <button onclick="showAddProviderForm()">Добавить поставщика</button>
-    <form id="provider-form" style="display: none;">
-        <input type="text" id="provider-name" placeholder="Имя поставщика" required>
-        <input type="text" id="provider-bank" placeholder="Банк" required>
-        <input type="text" id="provider-bik" placeholder="БИК банка" required>
-        <input type="text" id="provider-account" placeholder="Номер счёта" required>
-        <button type="button" onclick="saveProvider()">Сохранить</button>
+
+    <!-- Список поставщиков -->
+    <label for="provider-select">Выберите поставщика:</label>
+    <select id="provider-select" onchange="fillProviderForm()">
+      <option value="">-- Выберите --</option>
+    </select>
+
+    <!-- Форма для редактирования поставщика -->
+    <form id="provider-form" style="display: none">
+      <label for="provider-name">Имя:</label>
+      <input type="text" id="provider-name" placeholder="Имя поставщика" />
+
+      <label for="bank-name">Наименование банка:</label>
+      <input type="text" id="bank-name" placeholder="Наименование банка" />
+
+      <label for="bank-bik">БИК банка:</label>
+      <input type="text" id="bank-bik" placeholder="БИК банка" />
+
+      <label for="account-number">Расчетный счет:</label>
+      <input type="text" id="account-number" placeholder="Расчетный счет" />
+
+      <button type="button" onclick="updateProvider()">Изменить</button>
     </form>
-    <div id="providers-list"></div>
+
+    <br />
     <a href="index.html">На главную</a>
-</body>
+
+    <script>
+      const providerApiUrl = "http://localhost:8080/serviceProviders"; // URL для работы с поставщиками
+      let providers = []; // Для хранения загруженных поставщиков
+      let selectedProviderId = null; // Для хранения ID выбранного поставщика
+
+      // Загружаем список поставщиков
+      async function fetchProviders() {
+        try {
+          const response = await fetch(providerApiUrl);
+          if (!response.ok) {
+            throw new Error(`Ошибка HTTP: ${response.status}`);
+          }
+          providers = await response.json();
+          populateProviderSelect(providers);
+        } catch (error) {
+          console.error("Ошибка загрузки поставщиков услуг:", error);
+        }
+      }
+
+      // Заполняем выпадающий список поставщиков
+      function populateProviderSelect(providers) {
+        const providerSelect = document.getElementById("provider-select");
+        providerSelect.innerHTML = '<option value="">-- Выберите --</option>'; // Очистка перед заполнением
+
+        providers.forEach((provider) => {
+          const option = document.createElement("option");
+          option.value = provider.id; // Уникальный идентификатор
+          option.textContent = `${provider.name} (Account: ${provider.accountNumber})`;
+          providerSelect.appendChild(option);
+        });
+      }
+
+      // Заполняем форму для выбранного поставщика
+      function fillProviderForm() {
+        const providerSelect = document.getElementById("provider-select");
+        selectedProviderId = providerSelect.value;
+
+        // Если не выбрано, очищаем форму
+        if (!selectedProviderId) {
+          document.getElementById("provider-form").style.display = "none";
+          return;
+        }
+
+        const selectedProvider = providers.find(
+          (provider) => provider.id === parseInt(selectedProviderId)
+        );
+        if (selectedProvider) {
+          document.getElementById("provider-name").value =
+            selectedProvider.name;
+          document.getElementById("bank-name").value =
+            selectedProvider.bankName;
+          document.getElementById("bank-bik").value = selectedProvider.bankBik;
+          document.getElementById("account-number").value =
+            selectedProvider.accountNumber;
+          document.getElementById("provider-form").style.display = "block";
+        }
+      }
+
+      // Отправляем обновленные данные поставщика на сервер
+      async function updateProvider() {
+        if (!selectedProviderId) {
+          alert("Пожалуйста, выберите поставщика для обновления.");
+          return;
+        }
+
+        const updatedProvider = {
+          name: document.getElementById("provider-name").value,
+          bankName: document.getElementById("bank-name").value,
+          bankBik: document.getElementById("bank-bik").value,
+          accountNumber: document.getElementById("account-number").value,
+        };
+
+        try {
+          const response = await fetch(
+            `${providerApiUrl}/${selectedProviderId}`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(updatedProvider),
+            }
+          );
+
+          if (response.ok) {
+            alert("Поставщик успешно обновлен!");
+            fetchProviders(); // Перезагружаем список поставщиков
+            document.getElementById("provider-form").style.display = "none"; // Скрываем форму
+          } else {
+            throw new Error(`Ошибка HTTP: ${response.status}`);
+          }
+        } catch (error) {
+          console.error("Ошибка обновления поставщика услуг:", error);
+        }
+      }
+
+      // Запускаем загрузку поставщиков при загрузке страницы
+      document.addEventListener("DOMContentLoaded", fetchProviders);
+    </script>
+  </body>
 </html>
