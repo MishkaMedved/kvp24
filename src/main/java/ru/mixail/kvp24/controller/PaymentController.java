@@ -34,4 +34,5 @@ public class PaymentController {
         Payment payment = paymentService.createPayment(consumer, amount, paymentDate);
         return ResponseEntity.ok(payment);
     }
+
 }

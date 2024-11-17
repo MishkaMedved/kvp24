@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Потребители услуг</title>
+    <script type="module" src="serviceConsumers.js" defer></script>
+</head>
+<body>
+    <h1>Потребители услуг</h1>
+    <button onclick="showAddConsumerForm()">Добавить потребителя</button>
+    
+    <!-- Список потребителей -->
+    <label for="consumer-select">Выберите потребителя:</label>
+    <select id="consumer-select" onchange="fillConsumerForm()">
+        <option value="">-- Выберите --</option>
+    </select>
+
+    <!-- Форма для редактирования потребителя -->
+    <form id="consumer-form" style="display: none;">
+        <input type="text" id="consumer-name" placeholder="Имя потребителя" required>
+        <input type="text" id="consumer-account" placeholder="Номер счёта" required>
+        <button type="button" onclick="saveConsumer()">Сохранить</button>
+    </form>
+
+    <div id="consumers-list"></div>
+    <a href="index.html">На главную</a>
+
+</body>
+</html>

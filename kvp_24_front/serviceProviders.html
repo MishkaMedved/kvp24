@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Поставщики услуг</title>
+    <script type="module" src="serviceProviders.js" defer></script>
+</head>
+<body>
+    <h1>Поставщики услуг</h1>
+    <button onclick="showAddProviderForm()">Добавить поставщика</button>
+    <form id="provider-form" style="display: none;">
+        <input type="text" id="provider-name" placeholder="Имя поставщика" required>
+        <input type="text" id="provider-bank" placeholder="Банк" required>
+        <input type="text" id="provider-bik" placeholder="БИК банка" required>
+        <input type="text" id="provider-account" placeholder="Номер счёта" required>
+        <button type="button" onclick="saveProvider()">Сохранить</button>
+    </form>
+    <div id="providers-list"></div>
+    <a href="index.html">На главную</a>
+</body>
+</html>
