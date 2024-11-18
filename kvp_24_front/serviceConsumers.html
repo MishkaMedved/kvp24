@@ -24,14 +24,18 @@
 
     <label for="consumer-account">Номер счета:</label>
     <input type="text" id="consumer-account" placeholder="Номер счета">
+
+    <button type="button" onclick="updateConsumer()">Изменить</button>
   </form>
-  
-  <a href="index.html">На главную</a>
+
+  <a href="index.html"></a>
 
   <script>
     const apiUrl = "http://localhost:8080/serviceConsumers"; // URL вашего бэкенда
     let consumers = []; // Для хранения загруженных потребителей
+    let selectedConsumerId = null; // Для хранения ID выбранного потребителя
 
+    // Загружаем список потребителей
     async function fetchConsumers() {
       try {
         const response = await fetch(apiUrl);
@@ -45,6 +49,7 @@
       }
     }
 
+    // Заполняем выпадающий список
     function populateConsumerSelect(consumers) {
       const consumerSelect = document.getElementById("consumer-select");
       consumerSelect.innerHTML = '<option value="">-- Выберите --</option>'; // Очистка перед заполнением
@@ -57,17 +62,18 @@
       });
     }
 
+    // Заполняем форму для выбранного потребителя
     function fillConsumerForm() {
       const consumerSelect = document.getElementById("consumer-select");
-      const selectedId = consumerSelect.value;
+      selectedConsumerId = consumerSelect.value;
 
       // Если не выбрано, очищаем форму
-      if (!selectedId) {
+      if (!selectedConsumerId) {
         document.getElementById("consumer-form").style.display = "none";
         return;
       }
 
-      const selectedConsumer = consumers.find(consumer => consumer.id === parseInt(selectedId));
+      const selectedConsumer = consumers.find(consumer => consumer.id === parseInt(selectedConsumerId));
       if (selectedConsumer) {
         document.getElementById("consumer-name").value = selectedConsumer.fullName;
         document.getElementById("consumer-account").value = selectedConsumer.accountNumber;
@@ -75,9 +81,43 @@
       }
     }
 
+    // Отправляем обновленные данные на сервер
+    async function updateConsumer() {
+      if (!selectedConsumerId) {
+        alert("Пожалуйста, выберите потребителя для обновления.");
+        return;
+      }
+
+      const updatedConsumer = {
+        fullName: document.getElementById("consumer-name").value,
+        accountNumber: document.getElementById("consumer-account").value
+      };
+
+      try {
+        const response = await fetch(`${apiUrl}/${selectedConsumerId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(updatedConsumer)
+        });
+
+        if (response.ok) {
+          alert("Потребитель успешно обновлен!");
+          fetchConsumers(); // Перезагружаем список потребителей
+          document.getElementById("consumer-form").style.display = "none"; // Скрываем форму
+        } else {
+          throw new Error(`Ошибка HTTP: ${response.status}`);
+        }
+      } catch (error) {
+        console.error("Ошибка обновления потребителя услуг:", error);
+      }
+    }
+
     // Запускаем загрузку потребителей при загрузке страницы
     document.addEventListener("DOMContentLoaded", fetchConsumers);
   </script>
+
 </body>
 
 </html>
