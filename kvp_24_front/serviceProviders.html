@@ -61,7 +61,7 @@
         providers.forEach((provider) => {
           const option = document.createElement("option");
           option.value = provider.id; // Уникальный идентификатор
-          option.textContent = `${provider.name} (Account: ${provider.accountNumber})`;
+          option.textContent = `${provider.name} (Лицевой счет: ${provider.accountNumber})`;
           providerSelect.appendChild(option);
         });
       }
