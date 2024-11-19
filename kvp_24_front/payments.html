@@ -8,12 +8,19 @@
 </head>
 <body>
     <h1>Ввод платежей</h1>
+
     <form id="payment-form">
-        <input type="text" id="consumer-id" placeholder="ID Потребителя" required>
+        <!-- Селект для выбора потребителя -->
+        <label for="consumer-select">Выберите потребителя:</label>
+        <select id="consumer-select" required>
+            <option value="">-- Выберите --</option>
+        </select>
+
         <input type="number" id="amount" placeholder="Сумма" required>
         <input type="date" id="payment-date" required>
         <button type="button" onclick="createPayment()">Создать Платеж</button>
     </form>
+
     <div id="payments-list"></div>
     <a href="index.html">На главную</a>
 </body>
