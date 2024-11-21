@@ -10,7 +10,7 @@ create table service_provider
 CREATE TABLE service_consumer
 (
     service_consumer_id SERIAL PRIMARY KEY,
-    service_provider_id         INT          REFERENCES service_provider (service_provider_id) ON DELETE SET NULL,
+    service_provider_id INT          REFERENCES service_provider (service_provider_id) ON DELETE SET NULL,
     full_name           VARCHAR(255) NOT NULL,
     account_number      VARCHAR(50) UNIQUE
 );

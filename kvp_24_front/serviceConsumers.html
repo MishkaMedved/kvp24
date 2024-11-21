@@ -10,7 +10,6 @@
 
 <body>
   <h1>Потребители услуг</h1>
-
   <!-- Список потребителей -->
   <label for="consumer-select">Выберите потребителя:</label>
   <select id="consumer-select" onchange="fillConsumerForm()">
@@ -28,7 +27,8 @@
     <button type="button" onclick="updateConsumer()">Изменить</button>
   </form>
 
-  <a href="index.html"></a>
+  <br>
+  <a href="index.html">На главную</a>
 
   <script>
     const apiUrl = "http://localhost:8080/serviceConsumers"; // URL вашего бэкенда
