@@ -27,7 +27,7 @@ public class Payment {
     private ServiceConsumer serviceConsumer; // Ссылка на потребителя услуг
 
     @Column(nullable = false)
-    private BigDecimal amount; // Сумма платежа
+    private double amount; // Сумма платежа
 
     @Column(name = "payment_date", nullable = false)
     private LocalDate paymentDate; // Дата платежа

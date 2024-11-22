@@ -23,16 +23,22 @@ public class FundsTransferService {
     private final PaymentRepository paymentRepository;
 
     @Transactional
-    public FundsTransfer createFundsTransfer(ServiceProvider serviceProvider, BigDecimal requestedAmount) {
+    public FundsTransfer createFundsTransfer(ServiceProvider serviceProvider, double requestedAmount) {
+        // Получаем все неоплаченные платежи для выбранного поставщика услуг
         List<Payment> unpaidPayments = paymentRepository.findByServiceConsumerServiceProviderAndIsTransferredFalse(serviceProvider);
-        BigDecimal totalAmount = BigDecimal.ZERO;
+
+        // Переменная для общей суммы
+        double totalAmount = 0.0;
         List<Payment> selectedPayments = new ArrayList<>();
 
         // Выбор платежей для формирования суммы перевода
         for (Payment payment : unpaidPayments) {
-            if (totalAmount.add(payment.getAmount()).compareTo(requestedAmount) > 0) break;
+            // Если добавление текущего платежа превышает запрашиваемую сумму, прекращаем выбор
+            if (totalAmount + payment.getAmount() > requestedAmount) {
+                break;
+            }
             selectedPayments.add(payment);
-            totalAmount = totalAmount.add(payment.getAmount());
+            totalAmount += payment.getAmount(); // Суммируем платежи
         }
 
         // Создаем запись о переводе
@@ -47,7 +53,7 @@ public class FundsTransferService {
             payment.setTransferred(true);
             paymentRepository.save(payment);
         }
-
         return transfer;
     }
+
 }

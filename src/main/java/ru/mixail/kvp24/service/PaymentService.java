@@ -22,7 +22,7 @@ public class PaymentService {
     private final ServiceProviderRepository serviceProviderRepository;
 
     @Transactional
-    public Payment createPayment(ServiceConsumer consumer, BigDecimal amount, LocalDate paymentDate) {
+    public Payment createPayment(ServiceConsumer consumer, double amount, LocalDate paymentDate) {
         Payment payment = new Payment();
         payment.setServiceConsumer(consumer);
         payment.setAmount(amount);
@@ -31,12 +31,14 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    public BigDecimal getSumPaymentsForProvider(Long providerId) {
-        BigDecimal sum = BigDecimal.ZERO;
+    public double getSumPaymentsForProvider(Long providerId) {
+        double sum = 0.0;
         List<Payment> payments = paymentRepository.findByServiceProviderIdAndIsTransferredFalse(providerId);
         for (Payment payment : payments) {
-            sum = sum.add(payment.getAmount());
+            sum = sum +(payment.getAmount());
         }
         return sum;
     }
+
+
 }

@@ -23,7 +23,7 @@ public class PaymentController {
     private final ServiceConsumerService serviceConsumerService;
 
     @PostMapping("/create")
-    public ResponseEntity<Payment> createPayment(@RequestParam Long consumerId, @RequestParam BigDecimal amount,
+    public ResponseEntity<Payment> createPayment(@RequestParam Long consumerId, @RequestParam double amount,
                                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate paymentDate) {
         // Загрузить ServiceConsumer из базы данных
         ServiceConsumer consumer = serviceConsumerService.getServiceConsumerById(consumerId);
@@ -33,8 +33,8 @@ public class PaymentController {
     }
 
     @GetMapping("/getSum")
-    public ResponseEntity<BigDecimal> getSum(@RequestParam Long providerId) {
-        BigDecimal sum = paymentService.getSumPaymentsForProvider(providerId);
+    public ResponseEntity<Double> getSum(@RequestParam Long providerId) {
+        double sum = paymentService.getSumPaymentsForProvider(providerId);
         return ResponseEntity.ok(sum);
     }
 

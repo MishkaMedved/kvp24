@@ -7,6 +7,6 @@ import java.math.BigDecimal;
 @Data
 public class FundsTransferRequest {
     private Long consumerId;
-    private BigDecimal targetAmount;
+    private double targetAmount;
 }
 

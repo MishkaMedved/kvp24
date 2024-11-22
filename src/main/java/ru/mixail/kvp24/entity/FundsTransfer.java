@@ -27,7 +27,7 @@ public class FundsTransfer {
     private ServiceProvider serviceProvider; // Ссылка на поставщика услуг
 
     @Column(nullable = false)
-    private BigDecimal amount; // Сумма перевода
+    private double amount; // Сумма перевода
 
     @Column(name = "transfer_date", nullable = false)
     private LocalDate transferDate; // Дата перевода
