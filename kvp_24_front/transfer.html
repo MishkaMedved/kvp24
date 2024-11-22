@@ -31,7 +31,69 @@
     <div id="transfer-result"></div>
     <a href="index.html">На главную</a>
     <script>
-        
+        document.addEventListener("DOMContentLoaded", () => {
+            const providerSelect = document.getElementById("provider-select");
+            const untransferredPaymentsSpan = document.getElementById("untransferred-payments");
+
+            providerSelect.addEventListener("change", async () => {
+                const providerId = providerSelect.value;
+
+                // Если поставщик не выбран, обнуляем сумму
+                if (!providerId) {
+                    untransferredPaymentsSpan.textContent = "0.00";
+                    return;
+                }
+
+                try {
+                    // Отправляем запрос к API
+                    const response = await fetch(`/getSum?providerId=${providerId}`);
+                    if (response.ok) {
+                        const sum = await response.json();
+                        untransferredPaymentsSpan.textContent = sum.toFixed(2); // Обновляем сумму
+                    } else {
+                        console.error("Ошибка при получении суммы платежей:", response.status);
+                        untransferredPaymentsSpan.textContent = "0.00";
+                    }
+                } catch (error) {
+                    console.error("Ошибка подключения к серверу:", error);
+                    untransferredPaymentsSpan.textContent = "0.00";
+                }
+            });
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // URL вашего API
+            const apiUrl = "http://localhost:8080/serviceProviders"; // Укажите правильный URL
+
+            // Элемент <select>
+            const providerSelect = document.getElementById("provider-select");
+
+            // Функция для загрузки поставщиков услуг
+            function loadServiceProviders() {
+                fetch(apiUrl)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Ошибка загрузки данных: " + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(providers => {
+                        providers.forEach(provider => {
+                            const option = document.createElement("option");
+                            option.value = provider.id; // Предположим, у поставщика есть поле `id`
+                            option.textContent = provider.name; // Предположим, у поставщика есть поле `name`
+                            providerSelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error("Ошибка при загрузке поставщиков услуг:", error);
+                    });
+            }
+
+            // Вызов функции при загрузке страницы
+            loadServiceProviders();
+        });
     </script>
 </body>
+
 </html>

@@ -5,10 +5,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.mixail.kvp24.entity.Payment;
 import ru.mixail.kvp24.entity.ServiceConsumer;
 import ru.mixail.kvp24.service.PaymentService;
@@ -33,6 +30,12 @@ public class PaymentController {
 
         Payment payment = paymentService.createPayment(consumer, amount, paymentDate);
         return ResponseEntity.ok(payment);
+    }
+
+    @GetMapping("/getSum")
+    public ResponseEntity<BigDecimal> getSum(@RequestParam Long providerId) {
+        BigDecimal sum = paymentService.getSumPaymentsForProvider(providerId);
+        return ResponseEntity.ok(sum);
     }
 
 }

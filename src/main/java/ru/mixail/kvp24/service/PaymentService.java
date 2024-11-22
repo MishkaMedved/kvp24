@@ -7,6 +7,7 @@ import ru.mixail.kvp24.entity.Payment;
 import ru.mixail.kvp24.entity.ServiceConsumer;
 import ru.mixail.kvp24.entity.ServiceProvider;
 import ru.mixail.kvp24.repository.PaymentRepository;
+import ru.mixail.kvp24.repository.ServiceProviderRepository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ import java.util.List;
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
+    private final ServiceProviderRepository serviceProviderRepository;
 
     @Transactional
     public Payment createPayment(ServiceConsumer consumer, BigDecimal amount, LocalDate paymentDate) {
@@ -29,7 +31,12 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
-    public List<Payment> getUntransferredPayments(ServiceProvider provider) {
-        return paymentRepository.findByServiceConsumerServiceProviderAndIsTransferredFalse(provider);
+    public BigDecimal getSumPaymentsForProvider(Long providerId) {
+        BigDecimal sum = BigDecimal.ZERO;
+        List<Payment> payments = paymentRepository.findByServiceProviderIdAndIsTransferredFalse(providerId);
+        for (Payment payment : payments) {
+            sum = sum.add(payment.getAmount());
+        }
+        return sum;
     }
 }

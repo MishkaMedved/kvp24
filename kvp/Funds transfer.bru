@@ -5,7 +5,15 @@ meta {
 }
 
 post {
-  url: /api/fundsTransfers/create
-  body: none
+  url: http://127.0.0.1:8080/fundsTransfers/create
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "consumerId": 1,
+    "targetAmount": 5000.00
+  }
+  
 }

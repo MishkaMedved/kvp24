@@ -21,13 +21,13 @@ public class FundsTransferController {
     private final FundsTransferService fundsTransferService;
     private final ServiceProviderService serviceProviderService;
 
-    @PostMapping("/create")
-    public ResponseEntity<FundsTransfer> createTransfer(@RequestParam Long serviceProviderId,
-                                                        @RequestParam BigDecimal amount) {
-        // Загрузить ServiceProvider из базы данных
-        ServiceProvider provider = serviceProviderService.getServiceProviderById(serviceProviderId);
-
-        FundsTransfer transfer = fundsTransferService.createFundsTransfer(provider, amount);
-        return ResponseEntity.ok(transfer);
-    }
+//    @PostMapping("/create")
+//    public ResponseEntity<FundsTransfer> createTransfer(@RequestParam Long serviceProviderId,
+//                                                        @RequestParam BigDecimal amount) {
+//        // Загрузить ServiceProvider из базы данных
+//        ServiceProvider provider = serviceProviderService.getServiceProviderById(serviceProviderId);
+//
+//        FundsTransfer transfer = fundsTransferService.createFundsTransfer(provider, amount);
+//        return ResponseEntity.ok(transfer);
+//    }
 }
