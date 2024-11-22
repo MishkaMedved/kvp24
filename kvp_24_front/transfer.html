@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Формирование перевода</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+
+        input,
+        select,
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #transfer-result {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Формирование перевода</h1>
+
+    <form id="transfer-form">
+        <!-- Селект для выбора поставщика услуг -->
+        <label for="provider-select">Выберите поставщика услуг:</label>
+        <select id="provider-select" required>
+            <option value="">-- Выберите --</option>
+        </select>
+
+        <!-- Сумма непереведенных платежей -->
+        <p>Непереведенные платежи: <span id="untransferred-payments">0.00</span> руб.</p>
+
+        <!-- Ввод суммы перевода -->
+        <label for="transfer-amount">Введите сумму перевода:</label>
+        <input type="number" id="transfer-amount" placeholder="Сумма перевода" step="0.01" required>
+
+        <button type="button" onclick="processFundsTransfer()">Создать перевод</button>
+    </form>
+
+    <div id="transfer-result"></div>
+    <a href="index.html">На главную</a>
+
+    <script>
+        const providersApiUrl = "http://localhost:8080/serviceProviders";
+        const untransferredPaymentsApiUrl = "http://localhost:8080/payments/untransferred";
+        const transfersApiUrl = "http://localhost:8080/fundsTransfers/create";
+        const markPaymentApiUrl = "http://localhost:8080/payments/markAsTransferred";
+
+        async function loadProviders() {
+            try {
+                const response = await fetch(providersApiUrl);
+                if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
+                const providers = await response.json();
+                populateProviderSelect(providers);
+            } catch (error) {
+                console.error("Ошибка загрузки поставщиков услуг:", error);
+                alert("Не удалось загрузить поставщиков услуг. Попробуйте позже.");
+            }
+        }
+
+        function populateProviderSelect(providers) {
+            const providerSelect = document.getElementById("provider-select");
+            providerSelect.innerHTML = '<option value="">-- Выберите --</option>';
+            providers.forEach(provider => {
+                const option = document.createElement("option");
+                option.value = provider.id;
+                option.textContent = `${provider.name} (ИНН: ${provider.taxNumber})`;
+                providerSelect.appendChild(option);
+            });
+        }
+
+        async function loadUntransferredPayments(providerId) {
+            try {
+                const url = new URL(untransferredPaymentsApiUrl);
+                url.searchParams.append("providerId", providerId);
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
+                const payments = await response.json();
+                const total = payments.reduce((sum, payment) => sum + payment.amount, 0);
+                document.getElementById("untransferred-payments").textContent = total.toFixed(2);
+                return payments;
+            } catch (error) {
+                console.error("Ошибка загрузки платежей:", error);
+                document.getElementById("untransferred-payments").textContent = "0.00";
+                return [];
+            }
+        }
+
+        function selectPaymentsForTransfer(payments, targetAmount) {
+            payments.sort((a, b) => b.amount - a.amount);
+            let selected = [];
+            let currentSum = 0;
+
+            for (const payment of payments) {
+                if (currentSum + payment.amount <= targetAmount) {
+                    selected.push(payment);
+                    currentSum += payment.amount;
+                }
+                if (currentSum === targetAmount) break;
+            }
+
+            return { selected, total: currentSum };
+        }
+
+        async function processFundsTransfer() {
+            const providerId = document.getElementById("provider-select").value;
+            const transferAmount = parseFloat(document.getElementById("transfer-amount").value);
+
+            if (!providerId) return alert("Выберите поставщика услуг.");
+            if (!transferAmount || transferAmount <= 0) return alert("Введите корректную сумму перевода.");
+
+            const payments = await loadUntransferredPayments(providerId);
+            const { selected, total } = selectPaymentsForTransfer(payments, transferAmount);
+
+            if (selected.length === 0) {
+                return alert("Недостаточно платежей для указанной суммы перевода.");
+            }
+
+            try {
+                const transferResponse = await fetch(transfersApiUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        serviceProviderId: providerId,
+                        amount: total,
+                        paymentIds: selected.map(payment => payment.id)
+                    })
+                });
+
+                if (!transferResponse.ok) throw new Error(`Ошибка создания перевода: ${transferResponse.status}`);
+                alert(`Перевод на сумму ${total.toFixed(2)} руб. успешно создан!`);
+
+                // Отметка всех платежей как переведенных
+                const markPromises = selected.map(payment =>
+                    fetch(`${markPaymentApiUrl}/${payment.id}`, { method: "POST" })
+                );
+                await Promise.all(markPromises);
+
+                document.getElementById("transfer-form").reset();
+                document.getElementById("untransferred-payments").textContent = "0.00";
+            } catch (error) {
+                console.error("Ошибка создания перевода:", error);
+                alert("Не удалось создать перевод. Попробуйте позже.");
+            }
+        }
+
+        // Обработчик изменения поставщика
+        document.getElementById("provider-select").addEventListener("change", async (event) => {
+            const providerId = event.target.value;
+            if (providerId) {
+                // Загружаем и суммируем непереведенные платежи
+                const payments = await loadUntransferredPayments(providerId);
+                const total = payments.reduce((sum, payment) => sum + payment.amount, 0);
+                document.getElementById("untransferred-payments").textContent = total.toFixed(2); // Отображаем сумму
+            } else {
+                // Если поставщик не выбран
+                document.getElementById("untransferred-payments").textContent = "0.00";
+            }
+        });
+
+        // Загрузка непереведенных платежей
+        async function loadUntransferredPayments(providerId) {
+            try {
+                const url = new URL(untransferredPaymentsApiUrl);
+                url.searchParams.append("providerId", providerId); // Добавляем параметр
+                const response = await fetch(url);
+                if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);
+                return await response.json(); // Возвращаем платежи
+            } catch (error) {
+                console.error("Ошибка загрузки платежей:", error);
+                return [];
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", loadProviders);
+    </script>
+</body>
+
+</html>
